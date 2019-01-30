@@ -1,10 +1,13 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import re
+from pylinkvalidator.api import crawl
+from seoanalyzer import analyze
 
 url = input("Enter your URL here ")
 keyword = input("Enter your keyword you want to check ")
 keyword = keyword.casefold()
+sitemap = url + '/sitemap.xml'
 
 try:
     html = urlopen(url)
@@ -35,7 +38,8 @@ def seo_title_stop_words(data):
                     words += 1
                     list_words.append(line.rstrip('\n'))
         if words > 0:
-            stop_words = "We found {} stop words in your title. You should consider removing them".format(words)
+            stop_words = "We found {} stop words in your title. You should consider removing them. {}"\
+                .format(words, list_words)
         else:
             stop_words = "We found no stop words in your title. Good work"
     else:
@@ -43,5 +47,16 @@ def seo_title_stop_words(data):
     return stop_words
 
 
+def validate_links(url):
+    crawled_site = crawl(url)
+    return crawled_site
+
+
+def seo_analyser(url, sitemap):
+    output = analyze(url, sitemap)
+    print(output)
+
+
 print(seo_title_found(keyword, data))
 print(seo_title_stop_words(data))
+# print(seo_analyser(url, sitemap))
